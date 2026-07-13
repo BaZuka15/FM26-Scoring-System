@@ -21,10 +21,10 @@ export function AppShell() {
 
   return (
     <div className="flex h-screen flex-col">
-      <header className="flex items-center justify-between border-b px-4 py-3">
+      <header className="flex flex-wrap items-center justify-between gap-2 border-b px-4 py-3">
         <h1 className="text-xl font-bold">FM26 Player Ratings</h1>
         {status === "loaded" && (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button variant={view === "rankings" ? "default" : "outline"} size="sm" onClick={() => setView("rankings")}>
               Rankings
             </Button>

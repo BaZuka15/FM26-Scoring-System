@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { POSITION_GROUP_ORDER } from "@/lib/rating/roles";
 import { isFilterActive, useFilterStore } from "@/lib/store/useFilterStore";
 import type { PositionGroup } from "@/lib/types";
@@ -14,20 +16,11 @@ function toNullableNumber(value: string): number | null {
   return Number.isFinite(num) ? num : null;
 }
 
-export function FilterPanel() {
+function FilterFields() {
   const filters = useFilterStore();
 
   return (
-    <div className="flex w-64 shrink-0 flex-col gap-4 border-r p-4">
-      <div className="flex items-center justify-between">
-        <h3 className="font-semibold">Filters</h3>
-        {isFilterActive(filters) && (
-          <Button variant="ghost" size="sm" onClick={() => filters.resetFilters()}>
-            Clear
-          </Button>
-        )}
-      </div>
-
+    <>
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="filter-position">Position</Label>
         <Select value={filters.positionGroup} onValueChange={(value) => filters.setFilter("positionGroup", value as PositionGroup | "ALL")}>
@@ -100,6 +93,54 @@ export function FilterPanel() {
           onChange={(e) => filters.setFilter("minRating", toNullableNumber(e.target.value))}
         />
       </div>
+    </>
+  );
+}
+
+/** Persistent sidebar on wider screens (sm and up). */
+export function FilterPanel() {
+  const filters = useFilterStore();
+
+  return (
+    <div className="hidden w-64 shrink-0 flex-col gap-4 border-r p-4 sm:flex">
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold">Filters</h3>
+        {isFilterActive(filters) && (
+          <Button variant="ghost" size="sm" onClick={() => filters.resetFilters()}>
+            Clear
+          </Button>
+        )}
+      </div>
+      <FilterFields />
+    </div>
+  );
+}
+
+/** Slide-over sheet on narrow screens, opened via a "Filters" button. */
+export function MobileFilterButton() {
+  const filters = useFilterStore();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="sm:hidden">
+      <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+        Filters{isFilterActive(filters) ? " •" : ""}
+      </Button>
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent side="left" className="w-full sm:max-w-xs">
+          <SheetHeader>
+            <SheetTitle>Filters</SheetTitle>
+          </SheetHeader>
+          <div className="flex flex-col gap-4 overflow-auto px-4 pb-4">
+            <FilterFields />
+            {isFilterActive(filters) && (
+              <Button variant="outline" size="sm" onClick={() => filters.resetFilters()}>
+                Clear filters
+              </Button>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

@@ -10,7 +10,7 @@ import { getBestRating } from "@/lib/rating/computeRating";
 import { ROLE_BY_ID } from "@/lib/rating/roles";
 import { usePlayerStore } from "@/lib/store/usePlayerStore";
 import { useFilterStore } from "@/lib/store/useFilterStore";
-import { FilterPanel } from "./FilterPanel";
+import { FilterPanel, MobileFilterButton } from "./FilterPanel";
 import { matchesFilters } from "./filterPredicate";
 import { getRankingColumns, type RankingRow } from "./columns";
 
@@ -69,9 +69,12 @@ export function RankingsView() {
       <FilterPanel />
       <div className="flex h-full flex-1 flex-col gap-4 overflow-hidden p-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <h2 className="text-lg font-semibold">
-            {rows.length} of {players.length} players
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="text-lg font-semibold">
+              {rows.length} of {players.length} players
+            </h2>
+            <MobileFilterButton />
+          </div>
           <RoleSelect
             value={selectedRoleId}
             onChange={setSelectedRoleId}

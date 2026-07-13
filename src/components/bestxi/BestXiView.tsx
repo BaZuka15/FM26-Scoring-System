@@ -68,8 +68,8 @@ export function BestXiView() {
   const emptySlots = result.slots.filter((s) => !s.starter);
 
   return (
-    <div className="flex h-full gap-4 overflow-hidden p-4">
-      <div className="flex flex-1 flex-col gap-4 overflow-auto">
+    <div className="flex h-full flex-col gap-4 overflow-auto p-4 sm:flex-row sm:overflow-hidden">
+      <div className="flex flex-1 flex-col gap-4 sm:overflow-auto">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Select value={formationId} onValueChange={(value) => setFormationId(value as string)}>
             <SelectTrigger className="w-40">
@@ -115,7 +115,7 @@ export function BestXiView() {
         </div>
       </div>
 
-      <div className="w-72 shrink-0 overflow-auto border-l pl-4">
+      <div className="w-full shrink-0 border-t pt-4 sm:w-72 sm:overflow-auto sm:border-l sm:border-t-0 sm:pt-0 sm:pl-4">
         {selectedSlot ? (
           <div className="flex flex-col gap-3">
             <div>
