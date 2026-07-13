@@ -69,3 +69,18 @@ describe("parseFmHtml", () => {
     expect(tomas.technical?.corners).toBeNull();
   });
 });
+
+describe("parseFmHtml - alternate real-world header spellings", () => {
+  it("recognizes 'Player' as the name column and 'Team Work' (with a space) as teamwork", () => {
+    const html = `
+      <table>
+        <tr><td>Player</td><td>Age</td><td>Team Work</td></tr>
+        <tr><td>Someone</td><td>22</td><td>14</td></tr>
+      </table>
+    `;
+    const { players, unrecognizedHeaders } = parseFmHtml(html);
+    expect(players[0].name).toBe("Someone");
+    expect(players[0].mental.teamwork).toBe(14);
+    expect(unrecognizedHeaders).toEqual([]);
+  });
+});

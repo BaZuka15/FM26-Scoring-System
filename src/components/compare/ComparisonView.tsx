@@ -3,11 +3,12 @@
 import { Fragment, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { RatingBadge } from "@/components/shared/RatingBadge";
 import { getBestRating } from "@/lib/rating/computeRating";
 import { ROLE_CATALOGUE } from "@/lib/rating/roles";
 import { usePlayerStore } from "@/lib/store/usePlayerStore";
 import { useSelectionStore } from "@/lib/store/useSelectionStore";
-import { formatCurrency, formatPositions, formatRating, humanizeKey } from "@/lib/utils/format";
+import { formatCurrency, formatPositions, humanizeKey } from "@/lib/utils/format";
 import type { Player } from "@/lib/types";
 
 interface AttrRow {
@@ -62,8 +63,11 @@ export function ComparisonView() {
 
   if (selectedPlayers.length === 0) {
     return (
-      <div className="flex h-full items-center justify-center p-6 text-center text-muted-foreground">
-        <p>Select players from Rankings (checkbox column) to compare them side by side.</p>
+      <div className="flex h-full items-center justify-center p-6 text-center">
+        <div className="flex flex-col items-center gap-2">
+          <p className="font-heading text-lg tracking-wide text-muted-foreground">No players selected</p>
+          <p className="max-w-xs text-sm text-muted-foreground">Check the box next to any player in Rankings to line them up here.</p>
+        </div>
       </div>
     );
   }
@@ -78,7 +82,7 @@ export function ComparisonView() {
   return (
     <div className="flex h-full flex-col gap-4 overflow-hidden p-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Comparing {selectedPlayers.length} players</h2>
+        <h2 className="font-heading text-lg tracking-wide">Comparing {selectedPlayers.length} players</h2>
         <Button variant="outline" size="sm" onClick={clear}>
           Clear selection
         </Button>
@@ -86,18 +90,20 @@ export function ComparisonView() {
 
       <div className="flex-1 overflow-auto rounded-md border">
         <table className="w-full border-collapse text-sm">
-          <thead className="sticky top-0 z-10 bg-background">
+          <thead className="sticky top-0 z-10 bg-card">
             <tr>
-              <th className="sticky left-0 z-20 min-w-32 bg-background p-2 text-left"></th>
+              <th className="sticky left-0 z-20 min-w-32 bg-card p-2 text-left"></th>
               {selectedPlayers.map((player) => (
                 <th key={player.id} className="min-w-40 border-l p-2 text-left">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="font-semibold">{player.name}</span>
-                    <Button variant="ghost" size="sm" onClick={() => toggle(player.id)}>
+                    <span className="font-heading tracking-wide">{player.name}</span>
+                    <Button variant="ghost" size="sm" onClick={() => toggle(player.id)} aria-label={`Remove ${player.name}`}>
                       ✕
                     </Button>
                   </div>
-                  <div className="text-xs font-normal text-muted-foreground">{formatPositions(player.positions)}</div>
+                  <div className="font-mono text-xs font-normal tracking-wide text-muted-foreground uppercase">
+                    {formatPositions(player.positions)}
+                  </div>
                 </th>
               ))}
             </tr>
@@ -106,13 +112,13 @@ export function ComparisonView() {
             <tr className="border-t bg-muted/30">
               <td className="sticky left-0 z-10 bg-muted/30 p-2 font-medium">Age</td>
               {selectedPlayers.map((p) => (
-                <td key={p.id} className="border-l p-2">
+                <td key={p.id} className="border-l p-2 font-mono tabular-nums">
                   {p.age ?? "-"}
                 </td>
               ))}
             </tr>
             <tr className="border-t">
-              <td className="sticky left-0 z-10 bg-background p-2 font-medium">Club</td>
+              <td className="sticky left-0 z-10 bg-card p-2 font-medium">Club</td>
               {selectedPlayers.map((p) => (
                 <td key={p.id} className="border-l p-2">
                   {p.club ?? "-"}
@@ -122,13 +128,13 @@ export function ComparisonView() {
             <tr className="border-t bg-muted/30">
               <td className="sticky left-0 z-10 bg-muted/30 p-2 font-medium">Value</td>
               {selectedPlayers.map((p) => (
-                <td key={p.id} className="border-l p-2">
+                <td key={p.id} className="border-l p-2 font-mono text-xs tabular-nums">
                   {formatCurrency(p.transferValueNumeric.min, p.transferValueNumeric.max)}
                 </td>
               ))}
             </tr>
             <tr className="border-t">
-              <td className="sticky left-0 z-10 bg-background p-2 font-medium">Best Role</td>
+              <td className="sticky left-0 z-10 bg-card p-2 font-medium">Best Role</td>
               {selectedPlayers.map((p) => {
                 const best = getBestRating(ratings[p.id]);
                 const bestRole = best ? ROLE_CATALOGUE.find((r) => r.id === best.roleId) : null;
@@ -136,8 +142,10 @@ export function ComparisonView() {
                   <td key={p.id} className="border-l p-2">
                     {bestRole && best ? (
                       <div className="flex items-center gap-1.5">
-                        <Badge variant="secondary">{bestRole.shortLabel}</Badge>
-                        <span className="font-mono">{formatRating(best.score)}</span>
+                        <Badge variant="secondary" className="font-heading text-[0.7rem] tracking-wide">
+                          {bestRole.shortLabel}
+                        </Badge>
+                        <RatingBadge rating={best} />
                       </div>
                     ) : (
                       "-"
@@ -150,7 +158,10 @@ export function ComparisonView() {
             {sections.map((section) => (
               <Fragment key={section.title}>
                 <tr className="border-t bg-muted/60">
-                  <td colSpan={selectedPlayers.length + 1} className="sticky left-0 p-2 text-xs font-semibold uppercase text-muted-foreground">
+                  <td
+                    colSpan={selectedPlayers.length + 1}
+                    className="sticky left-0 p-2 font-heading text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase"
+                  >
                     {section.title}
                   </td>
                 </tr>
@@ -158,9 +169,13 @@ export function ComparisonView() {
                   const bestIdx = bestValueIndex(row.values);
                   return (
                     <tr key={`${section.title}-${row.label}`} className="border-t">
-                      <td className="sticky left-0 z-10 bg-background p-2 text-muted-foreground">{row.label}</td>
+                      <td className="sticky left-0 z-10 bg-card p-2 text-muted-foreground">{row.label}</td>
                       {row.values.map((value, i) => (
-                        <td key={i} className={`border-l p-2 font-mono ${i === bestIdx ? "font-bold text-green-600 dark:text-green-400" : ""}`}>
+                        <td
+                          key={i}
+                          className="border-l p-2 font-mono tabular-nums"
+                          style={i === bestIdx ? { color: "var(--rating-green)", fontWeight: 700 } : undefined}
+                        >
                           {value ?? "-"}
                         </td>
                       ))}

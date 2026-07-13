@@ -40,8 +40,8 @@ export function WeightEditorView() {
     <div className="flex h-full flex-col gap-4 overflow-auto p-4">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
+          <h2 className="font-heading text-lg tracking-wide">Role Weights</h2>
           <RoleSelect value={roleId} onChange={setRoleId} className="w-64" />
-          <span className="text-sm text-muted-foreground">{role.shortLabel}</span>
         </div>
         {hasOverrides && (
           <Button variant="outline" size="sm" onClick={() => resetRole(roleId)}>
@@ -51,8 +51,8 @@ export function WeightEditorView() {
       </div>
 
       <p className="max-w-2xl text-sm text-muted-foreground">
-        Adjust how much each attribute counts toward this role&apos;s rating. Changes apply immediately across Rankings, Comparison, and Best
-        XI, and are saved in this browser.
+        Adjust how much each attribute counts toward <span className="text-foreground">{role.shortLabel}</span>&apos;s rating. Changes apply
+        immediately across Rankings, Comparison, and Best XI, and are saved in this browser.
       </p>
 
       <div className="grid max-w-2xl grid-cols-1 gap-3 sm:grid-cols-2">
@@ -61,7 +61,7 @@ export function WeightEditorView() {
           const value = roleOverrides[key] ?? defaultValue;
           const isOverridden = roleOverrides[key] !== undefined && roleOverrides[key] !== defaultValue;
           return (
-            <div key={key} className="flex flex-col gap-1.5 rounded-md border p-3">
+            <div key={key} className={`flex flex-col gap-1.5 rounded-md border bg-card p-3 ${isOverridden ? "border-primary/50" : ""}`}>
               <div className="flex items-center justify-between text-sm">
                 <span className={isOverridden ? "font-medium text-primary" : ""}>{humanizeKey(key)}</span>
                 <Input
@@ -74,7 +74,7 @@ export function WeightEditorView() {
                     const num = Number(e.target.value);
                     if (Number.isFinite(num)) setWeight(roleId, key, Math.min(MAX_WEIGHT, Math.max(MIN_WEIGHT, num)));
                   }}
-                  className="h-7 w-16 text-right"
+                  className="h-7 w-16 text-right font-mono tabular-nums"
                 />
               </div>
               <Slider

@@ -37,7 +37,7 @@ export const ATTRIBUTE_ALIASES: Record<AttributeKey, { group: AttributeGroup; va
   leadership: { group: "mental", variants: ["ldr", "leadership"] },
   offTheBall: { group: "mental", variants: ["otb", "off the ball"] },
   positioning: { group: "mental", variants: ["pos", "positioning"] },
-  teamwork: { group: "mental", variants: ["tea", "teamwork"] },
+  teamwork: { group: "mental", variants: ["tea", "teamwork", "team work"] },
   vision: { group: "mental", variants: ["vis", "vision"] },
   workRate: { group: "mental", variants: ["wor", "work rate"] },
 
@@ -83,7 +83,7 @@ export type BioField =
   | "wage";
 
 export const BIO_ALIASES: Record<BioField, string[]> = {
-  name: ["name"],
+  name: ["name", "player"],
   age: ["age"],
   club: ["club"],
   nationality: ["nation", "nationality", "nat."],

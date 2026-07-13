@@ -3,9 +3,9 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { getRatingBand } from "@/lib/rating/bands";
+import { RatingBadge } from "@/components/shared/RatingBadge";
 import { useSelectionStore } from "@/lib/store/useSelectionStore";
-import { formatCurrency, formatPositions, formatRating } from "@/lib/utils/format";
+import { formatCurrency, formatPositions } from "@/lib/utils/format";
 import type { Player, RatingResult, RoleDefinition } from "@/lib/types";
 
 export interface RankingRow {
@@ -13,23 +13,6 @@ export interface RankingRow {
   rating: RatingResult | null;
   best: RatingResult | null;
   bestRole: RoleDefinition | null;
-}
-
-const BAND_CLASSES: Record<string, string> = {
-  green: "text-green-600 dark:text-green-400",
-  amber: "text-amber-600 dark:text-amber-400",
-  red: "text-red-600 dark:text-red-400",
-};
-
-function RatingCell({ rating }: { rating: RatingResult | null }) {
-  if (!rating) return <span className="text-muted-foreground">-</span>;
-  const band = getRatingBand(rating.score);
-  return (
-    <span className={`font-mono font-medium ${BAND_CLASSES[band]}`}>
-      {formatRating(rating.score)}
-      {rating.isEstimate && <span title="Based on partial/unscouted data">*</span>}
-    </span>
-  );
 }
 
 function SelectCheckbox({ playerId }: { playerId: string }) {
@@ -57,17 +40,19 @@ export function getRankingColumns(selectedRoleLabel: string): ColumnDef<RankingR
       id: "name",
       header: "Name",
       accessorFn: (row) => row.player.name,
-      cell: ({ row }) => <span className="font-medium">{row.original.player.name}</span>,
+      cell: ({ row }) => <span className="font-medium text-foreground">{row.original.player.name}</span>,
     },
     {
       id: "positions",
       header: "Position",
       accessorFn: (row) => formatPositions(row.player.positions),
+      cell: ({ row }) => <span className="font-mono text-xs text-muted-foreground">{formatPositions(row.original.player.positions)}</span>,
     },
     {
       id: "age",
       header: "Age",
       accessorFn: (row) => row.player.age ?? "-",
+      cell: ({ row }) => <span className="font-mono tabular-nums">{row.original.player.age ?? "-"}</span>,
     },
     {
       id: "club",
@@ -83,13 +68,17 @@ export function getRankingColumns(selectedRoleLabel: string): ColumnDef<RankingR
       id: "transferValue",
       header: "Value",
       accessorFn: (row) => row.player.transferValueNumeric.max ?? row.player.transferValueNumeric.min ?? -1,
-      cell: ({ row }) => formatCurrency(row.original.player.transferValueNumeric.min, row.original.player.transferValueNumeric.max),
+      cell: ({ row }) => (
+        <span className="font-mono text-xs tabular-nums text-muted-foreground">
+          {formatCurrency(row.original.player.transferValueNumeric.min, row.original.player.transferValueNumeric.max)}
+        </span>
+      ),
     },
     {
       id: "rating",
       header: selectedRoleLabel,
       accessorFn: (row) => row.rating?.score ?? -1,
-      cell: ({ row }) => <RatingCell rating={row.original.rating} />,
+      cell: ({ row }) => <RatingBadge rating={row.original.rating} />,
     },
     {
       id: "bestRole",
@@ -98,8 +87,10 @@ export function getRankingColumns(selectedRoleLabel: string): ColumnDef<RankingR
       cell: ({ row }) =>
         row.original.bestRole && row.original.best ? (
           <div className="flex items-center gap-2">
-            <Badge variant="secondary">{row.original.bestRole.shortLabel}</Badge>
-            <RatingCell rating={row.original.best} />
+            <Badge variant="secondary" className="font-heading text-[0.7rem] font-medium tracking-wide">
+              {row.original.bestRole.shortLabel}
+            </Badge>
+            <RatingBadge rating={row.original.best} />
           </div>
         ) : (
           <span className="text-muted-foreground">-</span>

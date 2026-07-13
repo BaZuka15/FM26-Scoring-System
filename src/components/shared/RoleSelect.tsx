@@ -1,7 +1,7 @@
 "use client";
 
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { POSITION_GROUP_ORDER, ROLE_CATALOGUE } from "@/lib/rating/roles";
+import { POSITION_GROUP_ORDER, ROLE_BY_ID, ROLE_CATALOGUE } from "@/lib/rating/roles";
 import type { PositionGroup, RoleDefinition } from "@/lib/types";
 
 function groupRolesByPosition(roles: RoleDefinition[]): Map<PositionGroup, RoleDefinition[]> {
@@ -26,7 +26,9 @@ export function RoleSelect({ value, onChange, className, extraOption }: RoleSele
   return (
     <Select value={value} onValueChange={(v) => onChange(v as string)}>
       <SelectTrigger className={className}>
-        <SelectValue placeholder="Select role..." />
+        <SelectValue placeholder="Select role...">
+          {(v: string) => (extraOption && v === extraOption.value ? extraOption.label : (ROLE_BY_ID.get(v)?.shortLabel ?? "Select role..."))}
+        </SelectValue>
       </SelectTrigger>
       <SelectContent>
         {extraOption && <SelectItem value={extraOption.value}>{extraOption.label}</SelectItem>}

@@ -1,50 +1,47 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { ShieldAlert, TriangleAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { RatingBadge } from "@/components/shared/RatingBadge";
+import { PitchMarkings } from "./PitchMarkings";
 import { buildBestXi, type SlotResult } from "@/lib/bestxi/buildBestXi";
 import { FORMATIONS } from "@/lib/bestxi/formations";
-import { getRatingBand } from "@/lib/rating/bands";
 import { ROLE_BY_ID } from "@/lib/rating/roles";
 import { usePlayerStore } from "@/lib/store/usePlayerStore";
 import { formatRating } from "@/lib/utils/format";
 
-const BAND_BG: Record<string, string> = {
-  green: "bg-green-100 border-green-400 dark:bg-green-950 dark:border-green-700",
-  amber: "bg-amber-100 border-amber-400 dark:bg-amber-950 dark:border-amber-700",
-  red: "bg-red-100 border-red-400 dark:bg-red-950 dark:border-red-700",
-};
-
 function SlotCard({ result, isSelected, onSelect }: { result: SlotResult; isSelected: boolean; onSelect: () => void }) {
   const { slot, starter, isWeakStarter, isThinDepth } = result;
-  const band = starter ? getRatingBand(starter.rating.score) : "red";
 
   return (
     <button
       onClick={onSelect}
-      className={`absolute flex w-24 -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-0.5 rounded-md border-2 px-2 py-1 text-center shadow-sm transition-transform hover:scale-105 ${BAND_BG[band]} ${isSelected ? "ring-2 ring-primary" : ""}`}
+      className={`absolute flex w-[5.6rem] -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-0.5 rounded-md border bg-card/95 px-1.5 py-1 text-center shadow-md backdrop-blur-sm transition-transform hover:z-10 hover:scale-110 ${
+        isSelected ? "border-primary ring-2 ring-primary" : "border-border/80"
+      }`}
       style={{ left: `${slot.x}%`, top: `${slot.y}%` }}
     >
-      <span className="text-[10px] font-semibold text-muted-foreground">{slot.label}</span>
+      <span className="font-heading text-[0.6rem] font-medium tracking-widest text-muted-foreground">{slot.label}</span>
       {starter ? (
         <>
-          <span className="truncate text-xs font-medium">{starter.player.name}</span>
-          <span className="font-mono text-xs">{formatRating(starter.rating.score)}</span>
+          <span className="w-full truncate text-[0.7rem] font-medium">{starter.player.name}</span>
+          <RatingBadge rating={starter.rating} />
         </>
       ) : (
-        <span className="text-xs text-muted-foreground">Empty</span>
+        <span className="py-0.5 text-[0.65rem] text-muted-foreground">Empty</span>
       )}
       {(isWeakStarter || isThinDepth) && (
-        <div className="flex gap-1">
+        <div className="absolute -top-1.5 -right-1.5 flex gap-0.5">
           {isWeakStarter && (
-            <span title="Weak starter" className="text-[10px]">
-              ⚠
+            <span title="Weak starter" className="flex size-4 items-center justify-center rounded-full bg-card shadow">
+              <TriangleAlert className="size-3" style={{ color: "var(--rating-red)" }} />
             </span>
           )}
           {isThinDepth && (
-            <span title="Thin depth behind this slot" className="text-[10px]">
-              🩹
+            <span title="Thin depth behind this slot" className="flex size-4 items-center justify-center rounded-full bg-card shadow">
+              <ShieldAlert className="size-3" style={{ color: "var(--rating-amber)" }} />
             </span>
           )}
         </div>
@@ -73,7 +70,7 @@ export function BestXiView() {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <Select value={formationId} onValueChange={(value) => setFormationId(value as string)}>
             <SelectTrigger className="w-40">
-              <SelectValue />
+              <SelectValue>{(v: string) => FORMATIONS.find((f) => f.id === v)?.name ?? v}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               {FORMATIONS.map((f) => (
@@ -83,27 +80,28 @@ export function BestXiView() {
               ))}
             </SelectContent>
           </Select>
-          <div className="text-sm text-muted-foreground">
-            Total rating: <span className="font-mono font-medium text-foreground">{formatRating(result.totalRating)}</span>
+          <div className="font-mono text-sm text-muted-foreground">
+            Total rating: <span className="font-medium text-foreground">{formatRating(result.totalRating)}</span>
           </div>
         </div>
 
         {(weakestSlot || emptySlots.length > 0) && (
           <div className="flex flex-wrap gap-2 text-sm">
             {emptySlots.length > 0 && (
-              <Badge variant="destructive">
+              <Badge variant="destructive" className="font-normal">
                 {emptySlots.length} unfilled slot{emptySlots.length === 1 ? "" : "s"}: {emptySlots.map((s) => s.slot.label).join(", ")}
               </Badge>
             )}
             {weakestSlot && (
-              <Badge variant="outline">
+              <Badge variant="outline" className="font-normal">
                 Weakest starter: {weakestSlot.slot.label} — {weakestSlot.starter!.player.name} ({formatRating(weakestSlot.starter!.rating.score)})
               </Badge>
             )}
           </div>
         )}
 
-        <div className="relative aspect-[2/3] w-full max-w-xl self-center rounded-md border bg-green-700/90 dark:bg-green-900">
+        <div className="relative aspect-2/3 w-full max-w-xl self-center overflow-hidden rounded-lg border shadow-inner">
+          <PitchMarkings />
           {result.slots.map((slotResult) => (
             <SlotCard
               key={slotResult.slot.slotId}
@@ -115,31 +113,32 @@ export function BestXiView() {
         </div>
       </div>
 
-      <div className="w-full shrink-0 border-t pt-4 sm:w-72 sm:overflow-auto sm:border-l sm:border-t-0 sm:pt-0 sm:pl-4">
+      <div className="w-full shrink-0 border-t pt-4 sm:w-72 sm:overflow-auto sm:border-t-0 sm:border-l sm:pt-0 sm:pl-4">
         {selectedSlot ? (
           <div className="flex flex-col gap-3">
             <div>
-              <h3 className="font-semibold">
+              <h3 className="font-heading text-base tracking-wide">
                 {selectedSlot.slot.label} — {ROLE_BY_ID.get(selectedSlot.slot.roleId)?.shortLabel ?? selectedSlot.slot.roleId}
               </h3>
               {selectedSlot.starter ? (
-                <p className="text-sm text-muted-foreground">
-                  Starter: {selectedSlot.starter.player.name} ({formatRating(selectedSlot.starter.rating.score)})
-                </p>
+                <div className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+                  <span>{selectedSlot.starter.player.name}</span>
+                  <RatingBadge rating={selectedSlot.starter.rating} />
+                </div>
               ) : (
-                <p className="text-sm text-muted-foreground">No eligible player found.</p>
+                <p className="mt-1 text-sm text-muted-foreground">No eligible player found.</p>
               )}
             </div>
             <div>
-              <h4 className="mb-1 text-sm font-semibold text-muted-foreground">Backups</h4>
+              <h4 className="mb-1 font-heading text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase">Backups</h4>
               {selectedSlot.backups.length === 0 ? (
                 <p className="text-sm text-muted-foreground">No backup options available.</p>
               ) : (
                 <ul className="flex flex-col gap-1">
                   {selectedSlot.backups.map((b) => (
-                    <li key={b.player.id} className="flex items-center justify-between text-sm">
+                    <li key={b.player.id} className="flex items-center justify-between rounded-sm px-1 py-1 text-sm hover:bg-accent/50">
                       <span>{b.player.name}</span>
-                      <span className="font-mono">{formatRating(b.rating.score)}</span>
+                      <RatingBadge rating={b.rating} />
                     </li>
                   ))}
                 </ul>

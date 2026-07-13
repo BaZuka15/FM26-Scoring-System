@@ -70,8 +70,8 @@ export function RankingsView() {
       <div className="flex h-full flex-1 flex-col gap-4 overflow-hidden p-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <h2 className="text-lg font-semibold">
-              {rows.length} of {players.length} players
+            <h2 className="font-heading text-lg tracking-wide">
+              {rows.length} <span className="text-muted-foreground">of {players.length} players</span>
             </h2>
             <MobileFilterButton />
           </div>
@@ -85,11 +85,15 @@ export function RankingsView() {
 
         <div ref={parentRef} className="flex-1 overflow-auto rounded-md border">
           <Table>
-            <TableHeader className="sticky top-0 z-10 bg-background">
+            <TableHeader className="sticky top-0 z-10 bg-card shadow-[0_1px_0_var(--border)]">
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
+                <TableRow key={headerGroup.id} className="hover:bg-transparent">
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} className="cursor-pointer select-none" onClick={header.column.getToggleSortingHandler()}>
+                    <TableHead
+                      key={header.id}
+                      className="cursor-pointer font-heading text-[0.7rem] font-medium tracking-[0.1em] text-muted-foreground uppercase select-none hover:text-foreground"
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {{ asc: " ↑", desc: " ↓" }[header.column.getIsSorted() as string] ?? ""}
                     </TableHead>
@@ -109,7 +113,7 @@ export function RankingsView() {
                   <TableRow
                     key={row.id}
                     style={{ height: ROW_HEIGHT }}
-                    className="cursor-pointer"
+                    className={`cursor-pointer ${virtualRow.index % 2 === 1 ? "bg-muted/20" : ""}`}
                     onClick={() => setDetailPlayerId(row.original.player.id)}
                   >
                     {row.getVisibleCells().map((cell) => (

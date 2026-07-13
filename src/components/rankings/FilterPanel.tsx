@@ -22,10 +22,10 @@ function FilterFields() {
   return (
     <>
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="filter-position">Position</Label>
+        <Label className="font-heading text-[0.7rem] font-medium tracking-[0.1em] text-muted-foreground uppercase" htmlFor="filter-position">Position</Label>
         <Select value={filters.positionGroup} onValueChange={(value) => filters.setFilter("positionGroup", value as PositionGroup | "ALL")}>
           <SelectTrigger id="filter-position" className="w-full">
-            <SelectValue />
+            <SelectValue>{(v: string) => (v === "ALL" ? "All positions" : v)}</SelectValue>
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="ALL">All positions</SelectItem>
@@ -39,7 +39,7 @@ function FilterFields() {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label>Age</Label>
+        <Label className="font-heading text-[0.7rem] font-medium tracking-[0.1em] text-muted-foreground uppercase">Age</Label>
         <div className="flex items-center gap-2">
           <Input
             type="number"
@@ -58,12 +58,12 @@ function FilterFields() {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="filter-club">Club</Label>
+        <Label className="font-heading text-[0.7rem] font-medium tracking-[0.1em] text-muted-foreground uppercase" htmlFor="filter-club">Club</Label>
         <Input id="filter-club" placeholder="Any club" value={filters.clubQuery} onChange={(e) => filters.setFilter("clubQuery", e.target.value)} />
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="filter-nation">Nationality</Label>
+        <Label className="font-heading text-[0.7rem] font-medium tracking-[0.1em] text-muted-foreground uppercase" htmlFor="filter-nation">Nationality</Label>
         <Input
           id="filter-nation"
           placeholder="Any nationality"
@@ -73,7 +73,7 @@ function FilterFields() {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="filter-status">Transfer status</Label>
+        <Label className="font-heading text-[0.7rem] font-medium tracking-[0.1em] text-muted-foreground uppercase" htmlFor="filter-status">Transfer status</Label>
         <Input
           id="filter-status"
           placeholder="e.g. Available, Loan"
@@ -83,7 +83,7 @@ function FilterFields() {
       </div>
 
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="filter-rating">Min rating</Label>
+        <Label className="font-heading text-[0.7rem] font-medium tracking-[0.1em] text-muted-foreground uppercase" htmlFor="filter-rating">Min rating</Label>
         <Input
           id="filter-rating"
           type="number"
@@ -104,7 +104,7 @@ export function FilterPanel() {
   return (
     <div className="hidden w-64 shrink-0 flex-col gap-4 border-r p-4 sm:flex">
       <div className="flex items-center justify-between">
-        <h3 className="font-semibold">Filters</h3>
+        <h3 className="font-heading text-sm font-medium tracking-[0.14em] text-muted-foreground uppercase">Filters</h3>
         {isFilterActive(filters) && (
           <Button variant="ghost" size="sm" onClick={() => filters.resetFilters()}>
             Clear

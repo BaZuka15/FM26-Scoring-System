@@ -7,9 +7,9 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-data);
+  --font-heading: var(--font-display);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -39,8 +39,13 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
-  --radius-sm: calc(var(--radius) * 0.6);
-  --radius-md: calc(var(--radius) * 0.8);
+  --color-pitch: var(--pitch);
+  --color-pitch-line: var(--pitch-line);
+  --color-rating-green: var(--rating-green);
+  --color-rating-amber: var(--rating-amber);
+  --color-rating-red: var(--rating-red);
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: calc(var(--radius) * 0.7);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
@@ -48,73 +53,94 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* Light "daylight" theme — kept coherent with the dark terminal identity below (same navy/gold
+   family, cool paper instead of the cream-and-serif look) even though dark ships as the default. */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  /* Declared unlayered (not inside @theme) so these definitively win over
+     shadcn's own competing --font-sans token from its @layer theme block —
+     @theme-layer rules always lose to unlayered rules in the cascade. */
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-data);
+  --font-heading: var(--font-display);
+  --background: oklch(0.97 0.006 250);
+  --foreground: oklch(0.19 0.03 258);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.19 0.03 258);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --popover-foreground: oklch(0.19 0.03 258);
+  --primary: oklch(0.62 0.13 75);
+  --primary-foreground: oklch(0.16 0.02 60);
+  --secondary: oklch(0.92 0.012 258);
+  --secondary-foreground: oklch(0.24 0.03 258);
+  --muted: oklch(0.94 0.008 258);
+  --muted-foreground: oklch(0.46 0.03 258);
+  --accent: oklch(0.92 0.012 258);
+  --accent-foreground: oklch(0.24 0.03 258);
+  --destructive: oklch(0.58 0.21 25);
+  --border: oklch(0.87 0.012 258);
+  --input: oklch(0.87 0.012 258);
+  --ring: oklch(0.62 0.13 75);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --radius: 0.5rem;
+  --sidebar: oklch(0.94 0.008 258);
+  --sidebar-foreground: oklch(0.19 0.03 258);
+  --sidebar-primary: oklch(0.62 0.13 75);
+  --sidebar-primary-foreground: oklch(0.16 0.02 60);
+  --sidebar-accent: oklch(0.92 0.012 258);
+  --sidebar-accent-foreground: oklch(0.24 0.03 258);
+  --sidebar-border: oklch(0.87 0.012 258);
+  --sidebar-ring: oklch(0.62 0.13 75);
+  --pitch: oklch(0.4 0.08 155);
+  --pitch-line: oklch(1 0 0 / 35%);
+  --rating-green: oklch(0.72 0.19 155);
+  --rating-amber: oklch(0.75 0.14 75);
+  --rating-red: oklch(0.62 0.21 25);
 }
 
+/* Dark "scouting terminal" theme — the shipped default. Deep navy chrome (floodlit pitch at
+   night) with a single warm gold accent, echoing Football Manager's own UI language and the
+   sport's trophy/gold-star vocabulary rather than a generic dark+neon AI default. */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
+  --background: oklch(0.17 0.025 258);
+  --foreground: oklch(0.94 0.01 250);
+  --card: oklch(0.21 0.028 258);
+  --card-foreground: oklch(0.94 0.01 250);
+  --popover: oklch(0.21 0.028 258);
+  --popover-foreground: oklch(0.94 0.01 250);
+  --primary: oklch(0.78 0.14 75);
+  --primary-foreground: oklch(0.16 0.02 60);
+  --secondary: oklch(0.27 0.03 258);
+  --secondary-foreground: oklch(0.86 0.015 250);
+  --muted: oklch(0.24 0.028 258);
+  --muted-foreground: oklch(0.66 0.025 255);
+  --accent: oklch(0.27 0.03 258);
+  --accent-foreground: oklch(0.94 0.01 250);
+  --destructive: oklch(0.66 0.2 23);
   --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.78 0.14 75);
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar: oklch(0.15 0.025 258);
+  --sidebar-foreground: oklch(0.94 0.01 250);
+  --sidebar-primary: oklch(0.78 0.14 75);
+  --sidebar-primary-foreground: oklch(0.16 0.02 60);
+  --sidebar-accent: oklch(0.27 0.03 258);
+  --sidebar-accent-foreground: oklch(0.94 0.01 250);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar-ring: oklch(0.78 0.14 75);
+  --pitch: oklch(0.32 0.06 155);
+  --pitch-line: oklch(1 0 0 / 22%);
+  --rating-green: oklch(0.74 0.19 155);
+  --rating-amber: oklch(0.78 0.14 75);
+  --rating-red: oklch(0.66 0.2 23);
 }
 
 @layer base {
@@ -126,5 +152,31 @@
   }
   html {
     @apply font-sans;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-heading tracking-wide;
+  }
+}
+
+@layer components {
+  .rating-chip {
+    @apply inline-flex items-center justify-center rounded-md border font-mono text-xs font-semibold tabular-nums;
+  }
+  .rating-chip[data-band="green"] {
+    background-color: color-mix(in oklab, var(--rating-green) 16%, transparent);
+    color: var(--rating-green);
+    border-color: color-mix(in oklab, var(--rating-green) 40%, transparent);
+  }
+  .rating-chip[data-band="amber"] {
+    background-color: color-mix(in oklab, var(--rating-amber) 16%, transparent);
+    color: var(--rating-amber);
+    border-color: color-mix(in oklab, var(--rating-amber) 40%, transparent);
+  }
+  .rating-chip[data-band="red"] {
+    background-color: color-mix(in oklab, var(--rating-red) 16%, transparent);
+    color: var(--rating-red);
+    border-color: color-mix(in oklab, var(--rating-red) 40%, transparent);
   }
 }
